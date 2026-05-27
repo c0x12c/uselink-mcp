@@ -21,7 +21,7 @@ npx -y @uselink/mcp
 | Variable | Required | Default | Notes |
 |---|---|---|---|
 | `USELINK_API_KEY` | Yes | — | Personal access token from uselink → Settings → Developer. Format: `ulk_pat_xxx`. |
-| `USELINK_API_BASE` | No | `https://api.uselink.app` | Override for self-hosted or staging environments. |
+| `USELINK_API_BASE` | No | `https://backend.uselink.app` | Override for self-hosted or staging environments. |
 
 ## Add to Claude Code
 

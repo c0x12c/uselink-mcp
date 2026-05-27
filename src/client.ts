@@ -1,6 +1,6 @@
 import { fetch, FormData, type RequestInit } from "undici";
 
-const DEFAULT_BASE_URL = "https://api.uselink.app";
+const DEFAULT_BASE_URL = "https://backend.uselink.app";
 
 export interface UselinkClientOptions {
   apiKey?: string;
