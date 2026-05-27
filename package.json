@@ -1,0 +1,62 @@
+{
+  "name": "@uselink/mcp",
+  "version": "0.1.0",
+  "description": "MCP server for publishing and managing uselink documents from AI coding tools (Claude, Cursor, Codex).",
+  "type": "module",
+  "license": "MIT",
+  "homepage": "https://uselink.app",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/c0x12c/uselink-mcp.git"
+  },
+  "bugs": {
+    "url": "https://github.com/c0x12c/uselink-mcp/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "bin": {
+    "uselink-mcp": "./dist/cli.js"
+  },
+  "main": "./dist/server.js",
+  "exports": {
+    ".": {
+      "types": "./dist/server.d.ts",
+      "import": "./dist/server.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx src/cli.ts",
+    "start": "node dist/cli.js",
+    "smoke": "tsx scripts/smoke.ts",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "uselink",
+    "claude",
+    "ai",
+    "publishing"
+  ],
+  "engines": {
+    "node": ">=18.17"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.4",
+    "node-html-parser": "^6.1.13",
+    "undici": "^6.21.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  }
+}
