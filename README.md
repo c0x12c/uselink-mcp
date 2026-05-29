@@ -25,7 +25,7 @@ Then set `USELINK_API_KEY=ulk_pat_xxx` in the Claude Code MCP environment. Full 
 Best for non-technical users (PM, designers) and tools that mandate OAuth (Claude.ai Connectors, Cursor extension store).
 
 ```bash
-claude mcp add --transport http uselink https://backend.uselink.app/mcp
+claude mcp add --transport http uselink <USELINK_BACKEND_URL>/mcp
 ```
 
 Browser opens, you log in to uselink, click "Allow" on the consent screen, done. Token rotation and revocation are automatic. Manage authorized clients at uselink → Settings → Connected Apps.
@@ -53,7 +53,7 @@ npx -y @uselink/mcp
 | Variable | Required | Default | Notes |
 |---|---|---|---|
 | `USELINK_API_KEY` | Yes | — | Personal access token from uselink → Settings → Developer. Format: `ulk_pat_xxx`. |
-| `USELINK_API_BASE` | No | `https://backend.uselink.app` | Override for self-hosted or staging environments. |
+| `USELINK_API_BASE` | No | uselink production backend | Override for self-hosted or staging environments. |
 
 ---
 
