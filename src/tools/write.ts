@@ -21,8 +21,18 @@ const CreateDocumentInputSchema = z.object({
   title: z.string().min(1).optional(),
   format: z.enum(["html", "markdown"]).default("markdown"),
   content: z.string().optional(),
+  slug: z.string().min(1).optional(),
+  project_id: z.string().uuid().optional(),
+  folder_id: z.string().uuid().optional(),
 });
 type CreateDocumentInput = z.infer<typeof CreateDocumentInputSchema>;
+
+const MoveDocumentInputSchema = z.object({
+  document_id: z.string().uuid(),
+  project_id: z.string().uuid(),
+  folder_id: z.string().uuid().optional(),
+});
+type MoveDocumentInput = z.infer<typeof MoveDocumentInputSchema>;
 
 const UpdateDocumentInputSchema = z.object({
   id: z.string().uuid(),
@@ -75,7 +85,7 @@ export const writeTools: ToolDefinition<unknown>[] = [
   {
     name: "uselink_create_document",
     description:
-      "Create a new draft document in the uselink workspace bound to the active PAT. Returns the created document including its id, slug, and edit URL. Content can be omitted and added later via uselink_update_document.",
+      "Create a new draft document in the uselink workspace bound to the active PAT. Returns the created document including its id, slug, and edit URL. Content can be omitted and added later via uselink_update_document. Pass project_id and/or folder_id to drop the doc directly into that location; otherwise it lands in the user's default project at the root.",
     inputSchema: {
       type: "object",
       properties: {
@@ -87,11 +97,45 @@ export const writeTools: ToolDefinition<unknown>[] = [
           description: "Document format",
         },
         content: { type: "string", description: "Initial draft body (HTML or Markdown)" },
+        slug: { type: "string", description: "Optional custom slug (default: derived from title)" },
+        project_id: {
+          type: "string",
+          format: "uuid",
+          description: "Target project (default: user's default project)",
+        },
+        folder_id: {
+          type: "string",
+          format: "uuid",
+          description: "Target folder inside the project (default: project root)",
+        },
       },
     },
     parse: (raw) => CreateDocumentInputSchema.parse(raw),
     handler: async (input, client) => {
       const data = await client.post<unknown>("/documents/create", input as CreateDocumentInput);
+      return { content: [{ type: "text", text: JSON.stringify(data, null, 2) }] };
+    },
+  },
+  {
+    name: "uselink_move_document",
+    description:
+      "Move a document into a different project and/or folder. Pass project_id (required) plus an optional folder_id; omit folder_id to land at the project root.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        document_id: { type: "string", format: "uuid" },
+        project_id: { type: "string", format: "uuid" },
+        folder_id: {
+          type: "string",
+          format: "uuid",
+          description: "Optional — project root if omitted",
+        },
+      },
+      required: ["document_id", "project_id"],
+    },
+    parse: (raw) => MoveDocumentInputSchema.parse(raw),
+    handler: async (input, client) => {
+      const data = await client.post<unknown>("/documents/move", input as MoveDocumentInput);
       return { content: [{ type: "text", text: JSON.stringify(data, null, 2) }] };
     },
   },
