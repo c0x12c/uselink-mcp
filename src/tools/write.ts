@@ -1,8 +1,21 @@
 import { z } from "zod";
 import { readFile, stat } from "fs/promises";
-import { basename } from "path";
+import { basename, extname } from "path";
 import { FormData, File } from "undici";
 import type { ToolDefinition } from "../server.js";
+
+const MIME_BY_EXT: Record<string, string> = {
+  ".png": "image/png",
+  ".jpg": "image/jpeg",
+  ".jpeg": "image/jpeg",
+  ".gif": "image/gif",
+  ".webp": "image/webp",
+  ".zip": "application/zip",
+};
+
+function detectContentType(filePath: string): string {
+  return MIME_BY_EXT[extname(filePath).toLowerCase()] ?? "application/octet-stream";
+}
 
 const CreateDocumentInputSchema = z.object({
   title: z.string().min(1).optional(),
@@ -52,8 +65,9 @@ async function buildMultipart(documentId: string, filePath: string): Promise<For
   await stat(filePath);
   const buffer = await readFile(filePath);
   const form = new FormData();
+  const contentType = detectContentType(filePath);
   form.append("document_id", documentId);
-  form.append("file", new File([buffer], basename(filePath)));
+  form.append("file", new File([buffer], basename(filePath), { type: contentType }));
   return form;
 }
 
