@@ -9,6 +9,8 @@ import { UselinkClient } from "./client.js";
 import { readTools } from "./tools/read.js";
 import { writeTools } from "./tools/write.js";
 import { orchestratorTools } from "./tools/orchestrator.js";
+import { projectTools } from "./tools/projects.js";
+import { folderTools } from "./tools/folders.js";
 
 export interface ToolDefinition<TInput> {
   name: string;
@@ -21,6 +23,8 @@ export interface ToolDefinition<TInput> {
 const tools: ToolDefinition<unknown>[] = [
   ...readTools,
   ...writeTools,
+  ...projectTools,
+  ...folderTools,
   ...orchestratorTools,
 ];
 
@@ -32,7 +36,7 @@ export function createServer(options: CreateServerOptions = {}): Server {
   const server = new Server(
     {
       name: "uselink-mcp",
-      version: "0.1.0",
+      version: "0.2.0",
     },
     {
       capabilities: {
