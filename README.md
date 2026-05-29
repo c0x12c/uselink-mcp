@@ -4,7 +4,39 @@ Model Context Protocol (MCP) server for [uselink](https://uselink.app). Lets Cla
 
 > Status: `0.2.0` — adds project + folder management and document moves.
 
-## Install
+---
+
+## Two ways to connect
+
+Uselink supports two parallel authentication paths. Pick one — they don't overlap.
+
+### Option A — stdio + Personal Access Token (this package)
+
+Best for CI/CD pipelines, scripted workflows, and power users who want fine-grained, revocable tokens.
+
+```bash
+claude mcp add uselink npx -y @uselink/mcp
+```
+
+Then set `USELINK_API_KEY=ulk_pat_xxx` in the Claude Code MCP environment. Full tool catalog (documents, projects, folders, webhooks orchestration) — everything below.
+
+### Option B — HTTP + OAuth (browser login, no token paste)
+
+Best for non-technical users (PM, designers) and tools that mandate OAuth (Claude.ai Connectors, Cursor extension store).
+
+```bash
+claude mcp add --transport http uselink <USELINK_BACKEND_URL>/mcp
+```
+
+Browser opens, you log in to uselink, click "Allow" on the consent screen, done. Token rotation and revocation are automatic. Manage authorized clients at uselink → Settings → Connected Apps.
+
+Tool coverage on HTTP transport is currently the document + asset + comment surface (14 tools). Project and folder tools remain stdio-only until they are wired into the HTTP server.
+
+> Both paths talk to the same backend; revoking via Settings → Connected Apps does not affect PATs, and rotating a PAT does not affect OAuth-issued tokens.
+
+---
+
+## Install (Option A)
 
 ```bash
 npm install -g @uselink/mcp
@@ -16,20 +48,14 @@ Or run on demand without a global install:
 npx -y @uselink/mcp
 ```
 
-## Environment
+## Environment (Option A)
 
 | Variable | Required | Default | Notes |
 |---|---|---|---|
 | `USELINK_API_KEY` | Yes | — | Personal access token from uselink → Settings → Developer. Format: `ulk_pat_xxx`. |
-| `USELINK_API_BASE` | No | `https://backend.uselink.app` | Override for self-hosted or staging environments. |
+| `USELINK_API_BASE` | No | uselink production backend | Override for self-hosted or staging environments. |
 
-## Add to Claude Code
-
-```bash
-claude mcp add uselink npx -y @uselink/mcp
-```
-
-Then set the API key in the Claude Code MCP environment for the `uselink` server, or export it in your shell before launching Claude Code.
+---
 
 ## Tools
 
@@ -60,7 +86,7 @@ Then set the API key in the Claude Code MCP environment for the `uselink` server
 
 ### Project tools
 
-Require `projects:read` (list/read/check-slug) or `projects:write` (everything else) on the PAT.
+Require `projects:read` (list/read/check-slug) or `projects:write` (everything else) on the PAT. **Stdio + PAT only — not yet on HTTP transport.**
 
 | Tool | Description |
 |---|---|
@@ -78,7 +104,7 @@ Require `projects:read` (list/read/check-slug) or `projects:write` (everything e
 
 ### Folder tools
 
-Require `folders:read` (list/read) or `folders:write` (everything else) on the PAT.
+Require `folders:read` (list/read) or `folders:write` (everything else) on the PAT. **Stdio + PAT only — not yet on HTTP transport.**
 
 | Tool | Description |
 |---|---|
@@ -94,6 +120,24 @@ Require `folders:read` (list/read) or `folders:write` (everything else) on the P
 | Tool | Description |
 |---|---|
 | `uselink_publish_with_assets` | Upload local images, rewrite `<img src>` to CDN URLs, create document, and publish — in one call |
+
+---
+
+## OAuth scopes (Option B only)
+
+When you connect via HTTP transport, the consent screen lists these scopes:
+
+| Scope | Grants |
+|---|---|
+| `docs:read` | List, read, and search your documents |
+| `docs:write` | Create, update, publish, unpublish, and delete documents |
+| `assets:write` | Upload images and files to your documents |
+| `comments:read` | Read comments on your documents |
+| `comments:moderate` | Reply to and resolve comments on your documents |
+
+Authorized clients can be listed and revoked individually at uselink → Settings → Connected Apps.
+
+---
 
 ## Development
 
