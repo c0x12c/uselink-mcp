@@ -115,6 +115,14 @@ Require `folders:read` (list/read) or `folders:write` (everything else) on the P
 | `uselink_move_folder` | Re-parent a folder |
 | `uselink_delete_folder` | Delete a folder (docs inside are moved to the project root) |
 
+### Account tools
+
+Require `account:write` on the PAT.
+
+| Tool | Description |
+|---|---|
+| `uselink_set_url_handle` | Set the user's public URL handle (3-30 lowercase letters/digits/hyphens, no leading/trailing hyphen). Required once before publishing the first document. Call this when publish returns `USERNAME_REQUIRED`. |
+
 ### Orchestrator
 
 | Tool | Description |
@@ -134,6 +142,7 @@ When you connect via HTTP transport, the consent screen lists these scopes:
 | `assets:write` | Upload images and files to your documents |
 | `comments:read` | Read comments on your documents |
 | `comments:moderate` | Reply to and resolve comments on your documents |
+| `account:write` | Set your public URL handle (required to publish your first doc) |
 
 Authorized clients can be listed and revoked individually at uselink → Settings → Connected Apps.
 

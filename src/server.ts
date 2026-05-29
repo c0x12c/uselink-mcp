@@ -11,6 +11,7 @@ import { writeTools } from "./tools/write.js";
 import { orchestratorTools } from "./tools/orchestrator.js";
 import { projectTools } from "./tools/projects.js";
 import { folderTools } from "./tools/folders.js";
+import { accountTools } from "./tools/account.js";
 
 export interface ToolDefinition<TInput> {
   name: string;
@@ -25,6 +26,7 @@ const tools: ToolDefinition<unknown>[] = [
   ...writeTools,
   ...projectTools,
   ...folderTools,
+  ...accountTools,
   ...orchestratorTools,
 ];
 
